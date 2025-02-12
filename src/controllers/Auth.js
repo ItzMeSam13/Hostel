@@ -16,7 +16,7 @@ export async function create_user(req, res) {
 	}
 
 	if (!validator.isMobilePhone(phone)) {
-		return res.status(400).json({ error: "Invalid phone number" });
+		return res.status(400).json({ error: "Invalid phone na umber" });
 	}
 
 	if (password.length < 6) {
@@ -40,6 +40,29 @@ export async function create_user(req, res) {
 		console.log(user);
 
 		return res.status(201).json({ message: "User created successfully", user });
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ error: "Internal server error" });
+	}
+}
+
+export async function login_user(req, res) {
+	const { email, password } = req.body;
+	if (!email || !password) {
+		return res.status(400).json({ error: "All fields are required" });
+	}
+	try {
+		const user = await prisma.user.findUnique({
+			where: { email },
+		});
+		if (!user) {
+			return res.status(404).json({ error: "User not found" });
+		}
+		const isPasswordValid = await bcrypt.compare(password, user.password);
+		if (!isPasswordValid) {
+			return res.status(401).json({ error: "Invalid password" });
+		}
+		return res.status(201).json({ message: "Login successful", user });
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({ error: "Internal server error" });
