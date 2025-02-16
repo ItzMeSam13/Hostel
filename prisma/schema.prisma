@@ -20,13 +20,16 @@ model User {
   password  String
   createdAt DateTime @default(now())  
   updatedAt DateTime @updatedAt
+  bookings      Bookings[]
 }
+
 model Rooms{
   room_id   String   @id @default(cuid())
   room_no   Int      @unique
   room_capacity Int
   floor_no  Int
   status    String  @default("available")
+  bookings      Bookings[]
 }
 
 model Warden{
@@ -35,4 +38,15 @@ model Warden{
   phone     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Bookings{
+  bookingId String   @id @default(cuid())
+  userId    String
+  roomId    String
+  status    String   @default("pending") // pending, approved, rejected
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  room      Rooms    @relation(fields: [roomId], references: [room_id])
 }
