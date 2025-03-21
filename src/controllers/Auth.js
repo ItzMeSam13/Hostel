@@ -16,7 +16,7 @@ export async function create_user(req, res) {
 	}
 
 	if (!validator.isMobilePhone(phone)) {
-		return res.status(400).json({ error: "Invalid phone na umber" });
+		return res.status(400).json({ error: "Invalid phone number" });
 	}
 
 	if (password.length < 6) {
